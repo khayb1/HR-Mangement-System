@@ -40,10 +40,35 @@ const Login = () => {
     } else {
       setMessage("Login successful!");
       console.log(data.user);
-      navigate("/adminDashboard");
+    }
+
+    // 2. Fetch user role
+    const { data: profile, error: roleError } = await supabase
+      .from("profile")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    if (roleError) {
+      setMessage("Role not found");
+      return;
+    }
+
+    // 3. Redirect based on role
+    switch (profile.role) {
+      case "admin":
+        navigate("/adminDashboard");
+        break;
+      case "hod":
+        navigate("/hodDashboard");
+        break;
+      case "employee":
+        navigate("/employeeDashboard");
+        break;
+      default:
+        navigate("/");
     }
   };
-
   return (
     <>
       <main className="bg-amber-100 w-full h-screen py-auto text-center flex flex-col justify-center items-center">
