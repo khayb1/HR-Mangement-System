@@ -39,9 +39,11 @@ const EmployeeDashboard = () => {
       <main className="p-4">
         <h1 className="text-2xl font-bold mb-4">Leave Overview</h1>
         <div className="flex gap-5 ">
+          {/* total leave days  */}
           <span>
             <div>
               <p>22</p>
+              <p>Total leave days</p>
             </div>
           </span>
         </div>
