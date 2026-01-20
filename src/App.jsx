@@ -6,19 +6,45 @@ import {
   Login,
   EmployeeDashboard,
 } from "./Pages/index";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/hodDashboard" element={<HodDashboard />} />
-          <Route path="/adminDashboard" element={<AdminDashboard />} />
-          <Route path="/employeeDashboard" element={<EmployeeDashboard />} />
-          <Route path="*" element={<Login />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route
+              path="/hodDashboard"
+              element={
+                <ProtectedRoute allowedRoles={["hod"]}>
+                  <HodDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/adminDashboard"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/employeeDashboard"
+              element={
+                <ProtectedRoute allowedRoles={["employee"]}>
+                  <EmployeeDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Login />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </>
   );
 }

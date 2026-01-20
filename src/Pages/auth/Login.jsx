@@ -1,75 +1,88 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router";
-import { Lock, Mail } from "lucide-react";
+import { LoaderIcon, Lock, Mail } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState("");
 
   const navigate = useNavigate();
+
+  const { user, role } = useAuth();
+
+  useEffect(() => {
+    if (user && role) {
+      if (role === "admin") navigate("/adminDashboard");
+      if (role === "hod") navigate("/hodDashboard");
+      if (role === "employee") navigate("/employeeDashboard");
+    }
+  }, [user, role]);
+
   // handling login
   const handleLogin = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    // Basic validation
+    // 1️⃣ Validate input FIRST
     if (!/\S+@\S+\.\S+/.test(email)) {
       setMessage("Please enter a valid email address");
       return;
     }
 
-    // user friendly errors
-    // User-friendly error messages
-    // if (error.message.includes("Invalid login credentials")) {
-    //   setMessage("Invalid email or password. Please try again.");
-    // } else if (error.message.includes("Email not confirmed")) {
-    //   setMessage("Please verify your email address before logging in.");
-    // } else if (error.message.includes("rate limit")) {
-    //   setMessage("Too many attempts. Please try again later.");
-    // } else {
-    //   setMessage(error.message || "An error occurred during login");
-    // }
+    // Login
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (error) {
       setMessage(error.message);
-    } else {
-      setMessage("Login successful!");
-      console.log(data.user);
+      return;
     }
 
-    // 2. Fetch user role
+    if (!data?.user) {
+      setMessage("Login failed");
+      setLoading(false);
+      return;
+    }
+
+    // Fetch role from profile table
     const { data: profile, error: roleError } = await supabase
-      .from("profile")
+      .from("profile") // ✅ as requested
       .select("role")
       .eq("id", data.user.id)
       .single();
 
-    if (roleError) {
-      setMessage("Role not found");
+    if (roleError || !profile?.role) {
+      setMessage("Role not assigned. Contact admin.");
+      setLoading(false);
       return;
     }
 
-    // 3. Redirect based on role
+    // Redirect immediately based on role
     switch (profile.role) {
       case "admin":
-        navigate("/adminDashboard");
+        navigate("/adminDashboard", { replace: true });
         break;
+
       case "hod":
-        navigate("/hodDashboard");
+        navigate("/hodDashboard", { replace: true });
         break;
+
       case "employee":
-        navigate("/employeeDashboard");
+        navigate("/employeeDashboard", { replace: true });
         break;
+
       default:
-        navigate("/");
+        navigate("/", { replace: true });
     }
   };
+
   return (
     <>
       <main className="bg-amber-100 w-full h-screen py-auto text-center flex flex-col justify-center items-center">
@@ -119,7 +132,7 @@ const Login = () => {
             type="submit"
             className="bg-gray-300 hover:bg-gray-500 text-lg font-medium p-2 pt-3 rounded-lg transition-all"
           >
-            Sign In
+            {loading ? "signing in" : "sign in"}
           </button>
           {message && (
             <p className="text-sm fond-bold text-black text-shadow-2xs absolute bottom-0 w-fit mx-auto">
