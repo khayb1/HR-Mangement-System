@@ -1,22 +1,29 @@
-// src/services/leaveService.js
 import { supabase } from "../supabase";
 
-export const getTotalLeaveDays = async () => {
+export const getLeaveSummary = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return 0;
+  if (!user) {
+    return { total: 0, used: 0, remaining: 0 };
+  }
 
+  // Get leave balance directly (single source of truth)
   const { data, error } = await supabase
     .from("leave_balances")
-    .select("total_days")
-    .eq("profile_id", user.id);
+    .select("total_days, remaining_days")
+    .eq("profile_id", user.id)
+    .single(); // assuming one row per user
 
   if (error) {
     console.error(error);
-    return 0;
+    return { total: 0, used: 0, remaining: 0 };
   }
 
-  return data.reduce((sum, item) => sum + item.total_days, 0);
+  const total = data.total_days ?? 0;
+  const remaining = data.remaining_days ?? 0;
+  const used = Math.max(total - remaining, 0);
+
+  return { total, used, remaining };
 };

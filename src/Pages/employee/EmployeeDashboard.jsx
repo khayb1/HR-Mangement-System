@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, LogOut, Timer } from "lucide-react";
 import { logout } from "../../utils/logout";
 import { useAuth } from "../../context/AuthContext";
-import { getTotalLeaveDays } from "../../services/leaveservices";
+import { getLeaveSummary } from "../../services/leaveservices";
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
@@ -23,17 +23,22 @@ const EmployeeDashboard = () => {
     navigate("/", { replace: true });
   };
 
-  // leave days remaining
-  const [totalLeaveDays, setTotalLeaveDays] = useState(0);
+  // leave summary remaining
+  const [totalLeave, setTotalLeave] = useState(0);
+  const [daysUsed, setUsed] = useState(0);
+  const [daysRemaining, setRemaining] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const total = await getTotalLeaveDays();
-      setTotalLeaveDays(total);
+    const loadLeave = async () => {
+      const { total, used, remaining } = await getLeaveSummary();
+      setTotalLeave(total);
+      setUsed(used);
+      setRemaining(remaining);
     };
 
-    fetchData();
+    loadLeave();
   }, []);
+
   return (
     <>
       <nav className="flex justify-between items-center px-10 py-5 bg-gray-100">
@@ -55,7 +60,7 @@ const EmployeeDashboard = () => {
           {/* total leave days  card */}
           <div className="flex flex-1 justify-between items-center shadow-xl bg-gray-200 p-10 rounded-lg gap-5 hover:-translate-y-2 transition-transform">
             <div>
-              <p className="text-3xl font-bold ">{totalLeaveDays}</p>
+              <p className="text-3xl font-bold ">{totalLeave}</p>
               <p>Total leave days</p>
             </div>
             <span className="p-2 bg-blue-500 rounded-xl">
@@ -65,18 +70,18 @@ const EmployeeDashboard = () => {
           {/* days used  card*/}
           <div className="flex flex-1 justify-between items-center shadow-xl bg-gray-200 p-10 rounded-lg gap-5 hover:-translate-y-2 transition-transform">
             <div>
-              <p className="text-3xl font-bold ">22</p>
+              <p className="text-3xl font-bold ">{daysUsed}</p>
               <p>Days Used</p>
             </div>
-            <span className="p-2 bg-yellow-500 rounded-xl">
+            <span className="p-2 bg-red-500 rounded-xl">
               <LogOut size={40} color="white" />
             </span>
           </div>
           {/* Days remaining  */}
           <div className="flex flex-1 justify-between items-center shadow-xl bg-gray-200 p-10 rounded-lg gap-5 hover:-translate-y-2 transition-transform">
             <div>
-              <p className="text-3xl font-bold ">7</p>
-              <p>Days Used</p>
+              <p className="text-3xl font-bold ">{daysRemaining}</p>
+              <p>Days Remaining</p>
             </div>
             <span className="p-2 bg-green-500 rounded-xl">
               <LogOut size={40} color="white" />
@@ -86,9 +91,9 @@ const EmployeeDashboard = () => {
           <div className="flex flex-1 justify-between items-center shadow-xl bg-gray-200 p-10 rounded-lg gap-5 hover:-translate-y-2 transition-transform">
             <div>
               <p className="text-3xl font-bold ">2</p>
-              <p>Days Used</p>
+              <p>Pending Requests</p>
             </div>
-            <span className="p-2 bg-red-500 rounded-xl">
+            <span className="p-2 bg-orange-500 rounded-xl">
               <Timer size={40} color="white" />
             </span>
           </div>
