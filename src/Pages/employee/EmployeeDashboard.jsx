@@ -1,12 +1,9 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Calendar, CheckCircle2Icon, Clock, LogOut, Timer } from "lucide-react";
-import { logout } from "../../utils/logout";
 import { useAuth } from "../../context/AuthContext";
 import { getLeaveSummary } from "../../services/leaveservices";
 
 const EmployeeDashboard = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
 
   // Proper date
@@ -16,12 +13,6 @@ const EmployeeDashboard = () => {
     month: "long",
     day: "numeric",
   });
-
-  // Logout
-  const handleLogout = async () => {
-    await logout();
-    navigate("/", { replace: true });
-  };
 
   // leave summary remaining
   const [totalLeave, setTotalLeave] = useState(0);
@@ -98,13 +89,6 @@ const EmployeeDashboard = () => {
             </span>
           </div>
         </div>
-
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded"
-        >
-          Logout
-        </button>
       </main>
     </>
   );
