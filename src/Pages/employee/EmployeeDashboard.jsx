@@ -1,7 +1,15 @@
 import { React, useState, useEffect } from "react";
-import { Calendar, CheckCircle2Icon, Clock, LogOut, Timer } from "lucide-react";
+import {
+  Calendar,
+  CheckCircle2Icon,
+  Clock,
+  FastForwardIcon,
+  LogOut,
+  Timer,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { getLeaveSummary } from "../../services/leaveservices";
+import { Link } from "react-router-dom";
 
 const EmployeeDashboard = () => {
   const { user } = useAuth();
@@ -89,6 +97,33 @@ const EmployeeDashboard = () => {
             </span>
           </div>
         </div>
+        {/* quick actions  */}
+        <section className="flex flex-col mt-5 bg-gray-100 p-5 rounded-2xl">
+          {/* top section  */}
+          <div className="flex gap-5 ">
+            <FastForwardIcon size={30} className="" />
+            <p className="text-lg font-bold mb-5">Quick Actions</p>
+          </div>
+          {/* down section  */}
+          <div className="flex gap-5  ">
+            {/* apply for leave  */}
+            <Link
+              to=""
+              className="flex w-56 justify-center items-center transition-all gap-3 px-4 py-3 border-none bg-amber-200 rounded-2xl hover:bg-amber-100 "
+            >
+              <CheckCircle2Icon size={30} />
+              Apply For Leave
+            </Link>
+            {/* leave history  */}
+            <Link
+              to="/leave-history"
+              className="flex w-56 justify-center  items-center transition-all gap-3 px-4 py-3 border-none bg-amber-200 rounded-2xl hover:bg-amber-100 "
+            >
+              <CheckCircle2Icon size={30} />
+              Leave History
+            </Link>
+          </div>
+        </section>
       </main>
     </>
   );

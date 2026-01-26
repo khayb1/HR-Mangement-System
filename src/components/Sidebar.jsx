@@ -28,7 +28,7 @@ const Sidebar = () => {
   };
 
   return (
-    <nav className="w-56 h-screen flex flex-col bg-gray-800 text-gray-200">
+    <nav className="w-56 h-full py-3 flex flex-col bg-gray-800 text-gray-200">
       {/* top section */}
       <div className="flex gap-5 justify-center items-center">
         <CalendarDays
@@ -36,7 +36,7 @@ const Sidebar = () => {
           color="yellow"
           className="bg-black/80 rounded-xl p-2"
         />
-        <p className="text-2xl font-bold w-40">Origin8 Leave Management</p>
+        <p className="text-xl font-bold w-40">Origin8 Leave Management</p>
       </div>
       {/* nav links */}
       <ul className="mt-6 gap-5 flex flex-col ">
@@ -87,9 +87,11 @@ const Sidebar = () => {
         />
         {/* name  */}
         <span className="flex flex-col items-center ">
-          <p className="font-bold text-2xl">{user?.name}</p>
-          <p className="text-xl font-semibold">{profile?.role}</p>
-          <p className="text-lg bg-blue-300 px-2 py-1 text-black rounded-xl">
+          {/* name  */}
+          <p className="font-bold text-xl">{profile?.full_name}</p>
+          {/* email */}
+          <p className="text-lg font-semibold">{user?.email}</p>
+          <p className="text-md bg-blue-300 px-2 py-1 text-black rounded-xl">
             {profile?.role}
           </p>
           <button
