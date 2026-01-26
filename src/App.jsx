@@ -8,11 +8,17 @@ import {
 } from "./Pages";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
+  const { user, role, loading } = useAuth();
+
+  if (loading) return null;
+
   return (
     <main className="flex">
-      <Sidebar />
+      {/* Sidebar only when logged in */}
+      {user && <Sidebar role={role} />}
 
       <div className="flex flex-1 flex-col">
         <Routes>

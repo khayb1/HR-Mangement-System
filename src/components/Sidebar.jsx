@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
-  const { profile, user } = useAuth();
+  const { profile, user, role } = useAuth();
 
   const [isactive, setIsActive] = useState();
 
@@ -28,7 +28,7 @@ const Sidebar = () => {
   };
 
   return (
-    <nav className="w-56 h-full py-3 flex flex-col bg-gray-800 text-gray-200">
+    <nav className="w-fit h-full py-3 px-4 flex flex-col bg-gray-800 text-gray-200 ">
       {/* top section */}
       <div className="flex gap-5 justify-center items-center">
         <CalendarDays
@@ -64,18 +64,25 @@ const Sidebar = () => {
             Profile
           </Link>
         </li>
-        <li className="flex gap-4 items-center hover:bg-amber-100 px-4 py-2 transition-all hover:text-gray-800">
-          <CircleCheckIcon size={30} />
-          <Link to="/approve-leaves" className="w-full">
-            Approve Leaves
-          </Link>
-        </li>
-        <li className="flex gap-4 items-center hover:bg-amber-100 px-4 py-2 transition-all hover:text-gray-800">
-          <Users size={30} />
-          <Link to="/employees" className="w-full">
-            Employees
-          </Link>
-        </li>
+        {/* hod and admin only  */}
+        {(role === "admin" || role === "hod") && (
+          <li className="flex gap-4 items-center hover:bg-amber-100 px-4 py-2 transition-all hover:text-gray-800">
+            <CircleCheckIcon size={30} />
+            <Link to="/approve-leaves" className="w-full">
+              Approve Leaves
+            </Link>
+          </li>
+        )}
+        {/* only admin  */}
+
+        {role === "admin" && (
+          <li className="flex gap-4 items-center hover:bg-amber-100 px-4 py-2 transition-all hover:text-gray-800">
+            <Users size={30} />
+            <Link to="/employees" className="w-full">
+              Employees
+            </Link>
+          </li>
+        )}
       </ul>
       {/* user info */}
       <div className="flex flex-col items-center mt-5">
